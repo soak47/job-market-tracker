@@ -1,0 +1,10 @@
+requests
+pydantic
+python-dotenv
+pandas
+sqlite-utils
+beautifulsoup4
+streamlit
+matplotlib
+altair
+pyyaml

@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "id": 1234567890,
+      "title": "Data Analyst (Python/SQL)",
+      "company": {
+        "display_name": "Acme Analytics"
+      },
+      "location": {
+        "display_name": "Melbourne, VIC"
+      },
+      "created": "2025-08-10T03:21:00Z",
+      "description": "We seek a data analyst with Python, SQL, pandas, and Power BI.",
+      "redirect_url": "https://example.com/job/1234567890",
+      "salary_min": 90000,
+      "salary_max": 110000,
+      "salary_currency": "AUD"
+    }
+  ]
+}
