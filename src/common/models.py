@@ -6,7 +6,7 @@ class Job(BaseModel):
     title: str
     company: Optional[str] = None
     location: Optional[str] = None
-    source: str = "adzuna"
+    source: str = "sample"
     posted_date: Optional[str] = None
     description: Optional[str] = None
     url: Optional[str] = None
@@ -14,4 +14,3 @@ class Job(BaseModel):
     salary_max: Optional[float] = None
     salary_avg: Optional[float] = None
     currency: Optional[str] = None
-    raw: Optional[dict] = None

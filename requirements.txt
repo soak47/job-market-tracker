@@ -5,6 +5,5 @@ pandas
 sqlite-utils
 beautifulsoup4
 streamlit
-matplotlib
 altair
 pyyaml
