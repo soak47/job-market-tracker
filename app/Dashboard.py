@@ -95,7 +95,11 @@ with col2:
     sources = ["All"] + sorted([s for s in df["source"].dropna().unique().tolist() if s.lower() != "sample"])
     source = st.selectbox("Source", sources, index=0)
 with col3:
-    role = st.text_input("Role filter (e.g. analyst, scientist)", "")
+    roles = ["All"] + sorted(df["role_bucket"].dropna().unique().tolist())
+    role = st.selectbox("Role", roles, index=0)
+    kw = st.text_input("Keyword (optional)", "")
+
+
 
 
 
@@ -105,8 +109,19 @@ if city != "All":
     view = view[view["city_clean"] == city]   # exact match
 if source != "All":
     view = view[view["source"] == source]
-if role:
-    view = view[view["title"].str.contains(role, case=False, na=False)]
+# Role filter
+if role != "All":
+    view = view[view["role_bucket"] == role]
+
+# Keyword filter (title/company/location; case-insensitive)
+if kw:
+    mask = (
+        view["title"].str.contains(kw, case=False, na=False)
+        | view["company"].str.contains(kw, case=False, na=False)
+        | view.get("location", pd.Series("", index=view.index)).astype(str).str.contains(kw, case=False, na=False)
+    )
+    view = view[mask]
+
 
 # 5) CHARTS/TABLES (use `view`, not `df`)
 st.subheader("Skills frequency")

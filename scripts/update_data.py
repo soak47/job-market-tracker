@@ -75,3 +75,69 @@ with open(path, "w", newline="", encoding="utf-8") as f:
             page += 1
 
 print(f"Saved {total} rows from {len(QUERIES)} term(s) -> {path}")
+
+
+from sqlite_utils import Database
+import re
+
+now = dt.datetime.utcnow().strftime("%Y%m%d")
+os.makedirs("data", exist_ok=True)
+csv_path = f"data/adzuna_{COUNTRY}_{now}.csv"
+
+fields = [
+    "id","title","company","location","created","category","contract_time",
+    "salary_is_predicted","salary_min","salary_max","redirect_url","search_term","role_bucket"
+]
+
+role_rx = re.compile(r"(analyst|scientist|engineer)", re.I)
+def bucket(title):
+    m = role_rx.search(title or "")
+    if not m: return "Other"
+    t = m.group(1).lower()
+    return {"analyst":"Analyst","scientist":"Scientist","engineer":"Engineer"}[t]
+
+seen = set()
+records = []  # will also go to SQLite
+
+for term in QUERIES:
+    got, page = 0, 1
+    while got < MAX_PER:
+        results = fetch(term, page)
+        if not results: break
+        for j in results:
+            jid = j.get("id")
+            if not jid or jid in seen:
+                continue
+            seen.add(jid)
+            rec = {
+                "id": jid,
+                "title": j.get("title"),
+                "company": (j.get("company") or {}).get("display_name"),
+                "location": (j.get("location") or {}).get("display_name"),
+                "created": j.get("created"),
+                "category": (j.get("category") or {}).get("label"),
+                "contract_time": j.get("contract_time"),
+                "salary_is_predicted": j.get("salary_is_predicted"),
+                "salary_min": j.get("salary_min"),
+                "salary_max": j.get("salary_max"),
+                "redirect_url": j.get("redirect_url"),
+                "search_term": term,
+                "role_bucket": bucket(j.get("title")),
+            }
+            records.append(rec)
+            got += 1
+            if got >= MAX_PER: break
+        page += 1
+
+# Write CSV (optional but handy)
+with open(csv_path, "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=fields); w.writeheader(); w.writerows(records)
+
+# Upsert into SQLite
+db = Database("data/jobs.db")
+tbl = db["jobs"]
+tbl.upsert_all(records, pk="id")
+tbl.create_index(["created"], if_not_exists=True)
+tbl.create_index(["role_bucket"], if_not_exists=True)
+
+print(f"Saved {len(records)} rows → {csv_path} and upserted into data/jobs.db")
