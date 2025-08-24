@@ -113,8 +113,9 @@ with col2:
     source = st.selectbox("Source", sources, index=0)
 with col3:
     roles = ["All"] + sorted(df["role_bucket"].dropna().unique().tolist())
-    role = st.selectbox("Role", roles, index=0)
-    kw = st.text_input("Keyword (optional)", "")
+    role = st.selectbox("Role (bucket)", roles, index=0, key="role_select_v2")
+    kw   = st.text_input("Keyword (optional)", "", key="kw_filter_v1")
+
 
 
 
