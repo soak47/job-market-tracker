@@ -45,6 +45,11 @@ jobs, skills = load_tables()
 # 1) LOAD → WORKING COPY
 df = jobs.copy()
 
+# After loading df from SQLite (keep your code above this)
+df["job_url"] = df.get("url")
+if "redirect_url" in df.columns:
+    df["job_url"] = df["job_url"].fillna(df["redirect_url"])
+
 # 2) CLEAN (make the raw data reliable)
 # 2a. dates
 df["posted_date"] = pd.to_datetime(df["posted_date"], errors="coerce")
@@ -57,17 +62,29 @@ for col in ["salary_min", "salary_max", "salary_avg"]:
 def canonical_city(loc: str) -> str:
     s = str(loc).lower()
     # Sydney
-    if any(k in s for k in ["sydney","nsw","chippendale","parramatta","north sydney","macquarie park","surry hills","ultimo","the rocks"]):
-        return "Sydney"
+    if any(k in s for k in ["sydney","nsw","liverpool plains","denistone west","chippendale","chatswood west","parramatta","blue haven","baulkham hills","arndell park","banksia","alexandria","north sydney","macquarie park","surry hills","ultimo","the rocks"]):
+        return "NSW"
     # Melbourne
-    if any(k in s for k in ["melbourne","vic","st kilda","docklands","richmond","hawthorn","cbd vic","west melbourne"]):
-        return "Melbourne"
+    if any(k in s for k in ["melbourne","vic","highpoint city","geelong","bundoora","alphington","cheltenham","st kilda","ballarat","docklands","richmond","hawthorn","cbd vic","west melbourne"]):
+        return "Victoria"
     # Perth
-    if any(k in s for k in ["perth","wa","west perth","osborne park","joondalup","welshpool"]):
-        return "Perth"
+    if any(k in s for k in ["perth","barton","innaloo","jandakot","wa","west perth","osborne park","joondalup","welshpool"]):
+        return "WA"
     # Brisbane
-    if any(k in s for k in ["brisbane","qld","fortitude valley","south brisbane","milton","toowong"]):
-        return "Brisbane"
+    if any(k in s for k in ["brisbane","bray park","qld","fortitude valley","south brisbane","milton","toowong"]):
+        return "QLD"
+    # SA
+    if any(k in s for k in ["Adelaide","Adelaide Cbd","ethelton","gepps cross","",""]):
+        return "South Australia"
+    # Tasmania
+    if any(k in s for k in ["circular head","hobart","smithton","","",""]):
+        return "Tasmania"
+    # ACT
+    if any(k in s for k in ["canberra","canberra cbd","","","",""]):
+        return "ACT"
+    # NT
+    if any(k in s for k in ["darwin","","","","",""]):
+        return "Northen Territory"
     # Fallback: first token before comma
     return s.split(",")[0].strip().title()
 
