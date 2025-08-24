@@ -136,7 +136,7 @@ with open(csv_path, "w", newline="", encoding="utf-8") as f:
 # Upsert into SQLite
 db = Database("data/jobs.db")
 tbl = db["jobs"]
-tbl.upsert_all(records, pk="id")
+tbl.upsert_all(records, pk="id", alter=True)
 tbl.create_index(["created"], if_not_exists=True)
 tbl.create_index(["role_bucket"], if_not_exists=True)
 
