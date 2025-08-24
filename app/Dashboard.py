@@ -66,7 +66,7 @@ def canonical_city(loc: str) -> str:
         return "NSW"
     # Melbourne
     if any(k in s for k in ["melbourne","vic","highpoint city","geelong","bundoora","alphington","cheltenham","st kilda","ballarat","docklands","richmond","hawthorn","cbd vic","west melbourne"]):
-        return "Victoria"
+        return "VIC"
     # Perth
     if any(k in s for k in ["perth","barton","innaloo","jandakot","wa","west perth","osborne park","joondalup","welshpool"]):
         return "WA"
@@ -74,16 +74,16 @@ def canonical_city(loc: str) -> str:
     if any(k in s for k in ["brisbane","bray park","qld","fortitude valley","south brisbane","milton","toowong"]):
         return "QLD"
     # SA
-    if any(k in s for k in ["Adelaide","Adelaide Cbd","ethelton","gepps cross","",""]):
-        return "South Australia"
+    if any(k in s for k in ["adelaide","adelaide Cbd","ethelton","gepps cross"]):
+        return "SA"
     # Tasmania
-    if any(k in s for k in ["circular head","hobart","smithton","","",""]):
-        return "Tasmania"
+    if any(k in s for k in ["circular head","hobart","smithton"]):
+        return "TAS"
     # ACT
-    if any(k in s for k in ["canberra","canberra cbd","","","",""]):
+    if any(k in s for k in ["canberra","canberra cbd"]):
         return "ACT"
     # NT
-    if any(k in s for k in ["darwin","","","","",""]):
+    if any(k in s for k in ["darwin"]):
         return "Northen Territory"
     # Fallback: first token before comma
     return s.split(",")[0].strip().title()
